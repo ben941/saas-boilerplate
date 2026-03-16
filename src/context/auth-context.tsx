@@ -7,7 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import { onAuthStateChanged, type User } from "firebase/auth";
-import { getFirebaseAuth } from "@/lib/firebase/client";
+import { getFirebaseAuth, isFirebaseConfigured } from "@/lib/firebase/client";
 
 export interface AuthContextValue {
   user: User | null;
@@ -23,6 +23,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Skip Firebase auth if not configured (allows UI preview without env vars)
+    if (!isFirebaseConfigured()) {
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(getFirebaseAuth(), (firebaseUser) => {
       setUser(firebaseUser);
       setLoading(false);
