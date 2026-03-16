@@ -1,36 +1,155 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BlogAI - AI Blog Generator SaaS Boilerplate
+
+A full-stack SaaS boilerplate for building an AI-powered blog generator. Built with Next.js 15, Firebase, Stripe, and Tailwind CSS.
+
+## Tech Stack
+
+- **Next.js 15** - App Router, Server Actions, TypeScript
+- **Firebase** - Authentication (Google + email/password) + Cloud Firestore
+- **Stripe** - Subscription billing with Checkout + Webhooks
+- **Tailwind CSS v4** + **shadcn/ui** - Modern, themeable UI
+- **Vercel** - One-click deployment
+
+## Prerequisites
+
+- Node.js 20+
+- pnpm (`npm install -g pnpm`)
+- A Firebase project
+- A Stripe account
+- (Optional) A Vercel account for deployment
 
 ## Getting Started
 
-First, run the development server:
+### 1. Use this Template
+
+Click the green **"Use this template"** button on GitHub, then clone your new repo:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git
+cd YOUR_REPO
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Install Dependencies
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 3. Set Up Environment Variables
 
-## Learn More
+```bash
+cp .env.example .env.local
+```
 
-To learn more about Next.js, take a look at the following resources:
+Fill in all values in `.env.local`. See sections below for where to find each value.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 4. Start Development
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+pnpm dev
+```
 
-## Deploy on Vercel
+Open [http://localhost:3000](http://localhost:3000).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Firebase Setup
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Go to [Firebase Console](https://console.firebase.google.com/) and create a new project
+2. Enable **Authentication** > Sign-in methods: Email/Password and Google
+3. Create a **Cloud Firestore** database (start in test mode for development)
+4. Go to Project Settings > General > Your apps > Add web app
+   - Copy the config values to your `NEXT_PUBLIC_FIREBASE_*` env vars
+5. Go to Project Settings > Service Accounts > Generate new private key
+   - Copy `project_id`, `client_email`, and `private_key` to `FIREBASE_ADMIN_*` env vars
+
+### Email Setup (Optional)
+
+To enable welcome emails on signup:
+
+1. Go to Firebase Console > Extensions > Browse
+2. Install **"Trigger Email from Firestore"**
+3. Connect a SendGrid account (free tier: 100 emails/day)
+4. Set the collection path to `mail`
+
+## Stripe Setup
+
+1. Go to [Stripe Dashboard](https://dashboard.stripe.com/) > Developers > API Keys
+   - Copy Publishable key to `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
+   - Copy Secret key to `STRIPE_SECRET_KEY`
+2. Create a Product with a recurring Price
+   - Copy the Price ID to `STRIPE_PRO_PRICE_ID`
+3. For local webhook testing, install the [Stripe CLI](https://stripe.com/docs/stripe-cli):
+
+```bash
+stripe listen --forward-to localhost:3000/api/webhooks/stripe
+```
+
+Copy the webhook signing secret to `STRIPE_WEBHOOK_SECRET`.
+
+## Cookie Secrets
+
+Generate secure cookie secrets for the auth middleware:
+
+```bash
+openssl rand -base64 32  # Use for COOKIE_SECRET_CURRENT
+openssl rand -base64 32  # Use for COOKIE_SECRET_PREVIOUS
+```
+
+## Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `pnpm dev` | Start dev server with Turbopack |
+| `pnpm build` | Create production build |
+| `pnpm start` | Start production server |
+| `pnpm lint` | Run ESLint |
+| `pnpm format` | Format code with Prettier |
+
+## Project Structure
+
+```
+src/
+├── app/                    # Pages and API routes
+│   ├── (auth)/             # Login + Signup pages
+│   ├── (dashboard)/        # Protected dashboard
+│   ├── (legal)/            # Terms + Privacy pages
+│   └── api/webhooks/       # Stripe webhook handler
+├── components/
+│   ├── ui/                 # shadcn/ui components
+│   ├── auth/               # Auth form components
+│   ├── landing/            # Landing page sections
+│   └── dashboard/          # Dashboard components
+├── lib/
+│   ├── firebase/           # Firebase SDK setup
+│   ├── stripe/             # Stripe integration
+│   └── firestore/          # Database helpers
+├── hooks/                  # Custom React hooks
+├── context/                # React context providers
+├── types/                  # TypeScript definitions
+└── middleware.ts           # Auth route protection
+```
+
+## Deployment to Vercel
+
+1. Push your repo to GitHub
+2. Go to [Vercel](https://vercel.com) and import your repository
+3. Add all environment variables from `.env.local` to the Vercel project settings
+4. Deploy
+
+**Note:** For the `FIREBASE_ADMIN_PRIVATE_KEY` env var on Vercel, paste the full key including the `-----BEGIN PRIVATE KEY-----` and `-----END PRIVATE KEY-----` markers. Vercel handles the newlines automatically.
+
+After deploying, update your Stripe webhook endpoint to point to `https://your-domain.vercel.app/api/webhooks/stripe`.
+
+## Course Notes
+
+This boilerplate is part of a course on building SaaS with Claude Code. During the course, you will:
+
+1. Set up your development environment and clone this template
+2. Configure Firebase Auth and user management
+3. Build the AI blog generation feature (the `blog-generator.tsx` stub)
+4. Set up Stripe payments and subscription gating
+5. Deploy to Vercel
+6. Iterate with Claude Code's agentic workflow
+
+## License
+
+MIT

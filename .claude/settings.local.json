@@ -6,7 +6,8 @@
       "Bash(pnpm create:*)",
       "Bash(pnpm install:*)",
       "Bash(ls -la *.* .gitignore)",
-      "Bash(pnpm dlx:*)"
+      "Bash(pnpm dlx:*)",
+      "Bash(pnpm add:*)"
     ]
   }
 }
