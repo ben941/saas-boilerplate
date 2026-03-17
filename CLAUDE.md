@@ -181,7 +181,7 @@ Write into `.env.local`:
 
 Then tell them:
 > Now create a product: go to Product catalog > + Add product.
-> Name it "Pro Plan", set pricing to Recurring, pick a price (e.g. $9.99/month), and save.
+> Name it "Pro Plan", set pricing to Recurring at $19/month (to match the landing page), and save.
 > On the product page, copy the Price ID (starts with price_...) and paste it here.
 
 Write into `.env.local`:

@@ -261,7 +261,7 @@ Where to find them: Stripe Dashboard > Developers > API keys (make sure Test mod
 
 1. Stripe Dashboard > Product catalog > **+ Add product**
 2. Name: `Pro Plan` (or whatever you like)
-3. Pricing: **Recurring**, e.g., $9.99/month
+3. Pricing: **Recurring**, $19/month (to match the pricing on the landing page)
 4. Save, then copy the **Price ID** (`price_...`)
 
 | Value | Env variable |
